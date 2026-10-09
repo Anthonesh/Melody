@@ -37,6 +37,15 @@
     .letter .ornament { color: #a52635; font-size: 1.5rem; margin-bottom: 6px; }
     .letter h2 { font-size: 1.36rem; font-style: italic; font-weight: normal; color: #7a2530; margin: 4px 0 21px; }
     .poem { font-size: clamp(1rem, 4.25vw, 1.16rem); line-height: 1.65; margin: 0; white-space: pre-line; color: #343138; }
+    .tease { margin: 24px 0 15px; border-top: 1px solid #d7c6b7; padding-top: 18px; }
+    .tease .question { color: #752832; margin: 0 0 7px; font-size: .98rem; }
+    .tease .bold-question { color: #45252b; margin: 0 0 15px; font-size: 1.25rem; font-weight: bold; }
+    .choices { position: relative; height: 78px; display: flex; justify-content: center; align-items: flex-start; gap: 14px; }
+    .choice { min-width: 105px; border-radius: 999px; padding: 11px 16px; font: 600 .9rem system-ui, sans-serif; cursor: pointer; border: 1px solid #ab8c86; touch-action: manipulation; }
+    .choice.yes { background: #a52534; color: #fff; border-color: #a52534; }
+    .choice.no { position: relative; background: #f8f2e9; color: #6d4245; transition: transform .18s ease; }
+    .choice:focus-visible { outline: 3px solid #a52534; outline-offset: 3px; }
+    .tease-answer { min-height: 35px; color: #792834; font-size: .94rem; font-style: italic; margin: 0 0 12px; }
     .letter .last { font-style: italic; color: #755d57; font-size: .93rem; margin: 23px 0 18px; }
     .action { appearance: none; border: none; background: #a52534; border-radius: 999px; padding: 13px 23px; color: #fff; font: 600 .9rem system-ui, sans-serif; cursor: pointer; box-shadow: 0 8px 18px #0002; }
     .action:hover { background: #8e1c2a; }
@@ -57,6 +66,7 @@
     <div id="opening" class="scene">
       <p class="eyebrow">Une petite surprise</p>
       <h1>Pour Melody</h1>
+      <p class="intro">J'avais quelque chose à te dire…<br>Mais j'ai préféré te l'écrire.</p>
       <button class="envelope" id="envelope" aria-label="Ouvrir l'enveloppe" type="button">
         <span class="back"></span><span class="inside">Pour toi ♡</span><span class="front"></span><span class="flap"></span><span class="seal">♥</span>
       </button>
@@ -68,12 +78,21 @@
       <p class="poem">T'as ce petit air innocent,
 Mais je me méfie de ton sourire.
 Tu joues avec mes sentiments,
-Et étrangement, je n'ai pas envie de fuir.
+Et moi, j'ai même pas envie de fuir.
 
 Si tes lèvres sont aussi dangereuses
 Que les idées que tu me donnes,
 Je veux bien tenter l'aventure,
 Même si ma raison m'abandonne.</p>
+      <div class="tease" id="tease">
+        <p class="question">Une dernière question, Melody…</p>
+        <p class="bold-question">Tu veux que je te soulève ? 😏</p>
+        <div class="choices" id="choices">
+          <button type="button" class="choice yes" id="yes">Oui 😈</button>
+          <button type="button" class="choice no" id="no">Non 🙄</button>
+        </div>
+        <p class="tease-answer" id="teaseAnswer" aria-live="polite"></p>
+      </div>
       <p class="last">Et si tu refermais cette lettre…</p>
       <button type="button" class="action" id="closeLetter">Refermer l'enveloppe ♡</button>
     </article>
@@ -102,6 +121,61 @@ Même si ma raison m'abandonne.</p>
     const letter = document.getElementById('letter');
     const ending = document.getElementById('ending');
     let busy = false;
+    const no = document.getElementById('no');
+    const answer = document.getElementById('teaseAnswer');
+    let dodges = 0;
+    let answered = false;
+    let suppressNextClick = false;
+
+    document.getElementById('yes').addEventListener('click', () => {
+      answered = true;
+      answer.textContent = 'Fais attention, je pourrais te prendre au mot… 😏';
+      no.style.transform = '';
+    });
+
+    function dodgeNo() {
+      if (answered || dodges >= 3) return false;
+      dodges++;
+      // Small moves that remain within the letter on narrow phone screens.
+      const offsets = [[18, 30], [-30, 25], [12, -3]];
+      const [x, y] = offsets[dodges - 1];
+      no.style.transform = `translate(${x}px, ${y}px)`;
+      if (dodges === 3) {
+        answer.textContent = 'Bon, promis, le bouton arrête de fuir. 😂';
+      }
+      return true;
+    }
+
+    // Mouse: dodge on hover. Touch/pen: dodge as soon as the finger lands.
+    no.addEventListener('pointerenter', event => {
+      if (event.pointerType === 'mouse') dodgeNo();
+    });
+    no.addEventListener('pointerdown', event => {
+      suppressNextClick = false;
+      if (event.pointerType === 'touch' || event.pointerType === 'pen') {
+        if (dodges < 3 && !answered) {
+          event.preventDefault();
+          suppressNextClick = true;
+          dodgeNo();
+        }
+      }
+    });
+    no.addEventListener('click', event => {
+      if (suppressNextClick) {
+        suppressNextClick = false;
+        event.preventDefault();
+        return;
+      }
+      // Keyboard and browsers without Pointer Events still get the joke.
+      if (!answered && dodges < 3) {
+        event.preventDefault();
+        dodgeNo();
+        return;
+      }
+      answered = true;
+      no.style.transform = '';
+      answer.textContent = 'D’accord… mais je garde le droit de te faire sourire. 😉';
+    });
 
     envelope.addEventListener('click', () => {
       if (busy) return;
