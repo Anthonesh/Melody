@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#171c24">
+  <title>Une lettre pour Melody 💌</title>
+  <meta name="description" content="Une petite lettre, rien que pour toi.">
+  <style>
+    :root { font-family: Georgia, 'Times New Roman', serif; color: #f2ece5; background: #171c24; }
+    * { box-sizing: border-box; }
+    body { margin: 0; min-height: 100svh; overflow-x: hidden; background: radial-gradient(ellipse at 50% 26%, #303640 0%, #1e242d 52%, #141920 100%); }
+    main { position: relative; isolation: isolate; min-height: 100svh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 30px 18px 42px; }
+    .ambient { position: fixed; inset: 0; pointer-events: none; overflow: hidden; z-index: -1; }
+    .float-heart { position: absolute; bottom: -50px; left: var(--x); color: #a93443; opacity: 0; font-size: var(--size); animation: floatUp var(--duration) linear infinite; animation-delay: var(--delay); }
+    @keyframes floatUp { 0% { transform: translateY(0) rotate(-14deg); opacity: 0; } 12% { opacity: .27; } 80% { opacity: .17; } 100% { transform: translateY(-115vh) rotate(20deg); opacity: 0; } }
+    .eyebrow { font: 700 .7rem/1.4 system-ui, sans-serif; letter-spacing: .33em; text-transform: uppercase; color: #bfb0a6; margin: 0 0 12px; }
+    h1 { text-align: center; font-size: clamp(2.2rem, 9vw, 3.5rem); line-height: 1.08; font-weight: normal; margin: 0 0 12px; color: #f6ede3; }
+    .intro { text-align: center; margin: 0 0 26px; line-height: 1.5; font-size: .98rem; color: #d2c5bb; }
+    .scene { width: min(92vw, 410px); display: grid; justify-items: center; }
+    .envelope { position: relative; width: min(85vw, 345px); height: 224px; cursor: pointer; border: 0; background: transparent; padding: 0; filter: drop-shadow(0 16px 24px #0007); -webkit-tap-highlight-color: transparent; transition: transform .35s ease; }
+    .envelope:hover { transform: translateY(-3px); }
+    .envelope:focus-visible, .action:focus-visible { outline: 3px solid #c3474b; outline-offset: 6px; }
+    .back { position: absolute; inset: 0; background: #bcae9c; border-radius: 10px; }
+    .inside { position: absolute; inset: 13px 18px 16px; border-radius: 5px; background: #fcf8f0; box-shadow: 0 1px 8px #0002; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; color: #493d38; transform: translateY(0); transition: transform .7s ease; }
+    .front { position: absolute; inset: 0; background: #d7c8b4; clip-path: polygon(0 0, 50% 51%, 100% 0, 100% 100%, 0 100%); border-radius: 0 0 10px 10px; z-index: 3; }
+    .front::after { content: ''; position: absolute; inset: 0; background: #e9dcc9; clip-path: polygon(0 100%, 50% 43%, 100% 100%); }
+    .flap { position: absolute; top: 0; left: 0; width: 100%; height: 58%; background: #c6b49e; clip-path: polygon(0 0, 100% 0, 50% 100%); transform-origin: top center; transform: rotateX(0deg); transition: transform .65s ease, z-index 0s linear .3s; z-index: 5; }
+    .seal { position: absolute; top: 91px; left: 50%; z-index: 6; translate: -50% 0; width: 45px; height: 45px; border-radius: 50%; background: #aa2634; color: #fff; display: grid; place-items: center; font-size: 1.45rem; box-shadow: 0 3px 12px #59121970; transition: opacity .3s ease; }
+    .envelope.open .flap { transform: rotateX(180deg); z-index: 1; }
+    .envelope.open .seal { opacity: 0; }
+    .envelope.open .inside { transform: translateY(-50px); }
+    .hint { font: .78rem/1.5 system-ui, sans-serif; color: #bcaea3; text-align: center; margin: 18px 0 0; }
+    .letter { width: min(92vw, 420px); background: #f5efe5; border: 1px solid #dacbb8; border-radius: 12px; box-shadow: 0 18px 55px #0008; padding: 28px 22px 24px; text-align: center; display: none; opacity: 0; transform: translateY(18px); }
+    .letter.visible { display: block; animation: letterIn .65s ease forwards; }
+    @keyframes letterIn { to { opacity: 1; transform: translateY(0); } }
+    .letter .ornament { color: #a52635; font-size: 1.5rem; margin-bottom: 6px; }
+    .letter h2 { font-size: 1.36rem; font-style: italic; font-weight: normal; color: #7a2530; margin: 4px 0 21px; }
+    .poem { font-size: clamp(1rem, 4.25vw, 1.16rem); line-height: 1.65; margin: 0; white-space: pre-line; color: #343138; }
+    .letter .last { font-style: italic; color: #755d57; font-size: .93rem; margin: 23px 0 18px; }
+    .action { appearance: none; border: none; background: #a52534; border-radius: 999px; padding: 13px 23px; color: #fff; font: 600 .9rem system-ui, sans-serif; cursor: pointer; box-shadow: 0 8px 18px #0002; }
+    .action:hover { background: #8e1c2a; }
+    .ending { display: none; text-align: center; width: min(92vw, 420px); padding: 10px 0; }
+    .ending.visible { display: block; animation: letterIn .9s ease both; }
+    .ending .big-heart { color: #d72638; font-size: 5.5rem; line-height: 1; display: block; animation: beat 1.15s ease-in-out infinite; filter: drop-shadow(0 10px 16px #8d0c2077); }
+    @keyframes beat { 0%, 100% { transform: scale(1); } 15% { transform: scale(1.16); } 30% { transform: scale(1.04); } 45% { transform: scale(1.13); } 65% { transform: scale(1); } }
+    .ending h2 { font-weight: normal; color: #f5ede6; font-size: clamp(2.4rem, 10vw, 3.7rem); margin: 20px 0 8px; }
+    .ending p { font-style: italic; font-size: 1.12rem; color: #d5c2b8; margin: 0 0 26px; }
+    .ending .action { background: #e8ded0; color: #7a2530; box-shadow: none; }
+    .hidden { display: none !important; }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; } }
+  </style>
+</head>
+<body>
+  <div class="ambient" aria-hidden="true" id="ambient"></div>
+  <main>
+    <div id="opening" class="scene">
+      <p class="eyebrow">Une petite surprise</p>
+      <h1>Pour Melody</h1>
+      <button class="envelope" id="envelope" aria-label="Ouvrir l'enveloppe" type="button">
+        <span class="back"></span><span class="inside">Pour toi ♡</span><span class="front"></span><span class="flap"></span><span class="seal">♥</span>
+      </button>
+      <p class="hint">Touche l'enveloppe pour l'ouvrir ♡</p>
+    </div>
+    <article class="letter" id="letter" aria-label="Lettre pour Melody">
+      <div class="ornament" aria-hidden="true">♡</div>
+      <h2>Un peu de toi, beaucoup de trouble</h2>
+      <p class="poem">T'as ce petit air innocent,
+Mais je me méfie de ton sourire.
+Tu joues avec mes sentiments,
+Et étrangement, je n'ai pas envie de fuir.
+
+Si tes lèvres sont aussi dangereuses
+Que les idées que tu me donnes,
+Je veux bien tenter l'aventure,
+Même si ma raison m'abandonne.</p>
+      <p class="last">Et si tu refermais cette lettre…</p>
+      <button type="button" class="action" id="closeLetter">Refermer l'enveloppe ♡</button>
+    </article>
+    <section class="ending" id="ending" aria-live="polite">
+      <span class="big-heart" aria-hidden="true">♥</span>
+      <h2>Je t'aime, Melody.</h2>
+      <p>Et ça, c'était pas prévu. ❤️</p>
+      <button type="button" class="action" id="replay">Revoir ma lettre ♡</button>
+    </section>
+  </main>
+  <script>
+    const ambient = document.getElementById('ambient');
+    for (let i = 0; i < 18; i++) {
+      const heart = document.createElement('span');
+      heart.className = 'float-heart';
+      heart.textContent = i % 3 === 0 ? '♡' : '♥';
+      heart.style.setProperty('--x', `${Math.random() * 100}%`);
+      heart.style.setProperty('--size', `${12 + Math.random() * 22}px`);
+      heart.style.setProperty('--duration', `${9 + Math.random() * 10}s`);
+      heart.style.setProperty('--delay', `${-Math.random() * 19}s`);
+      ambient.appendChild(heart);
+    }
+
+    const opening = document.getElementById('opening');
+    const envelope = document.getElementById('envelope');
+    const letter = document.getElementById('letter');
+    const ending = document.getElementById('ending');
+    let busy = false;
+
+    envelope.addEventListener('click', () => {
+      if (busy) return;
+      busy = true;
+      envelope.classList.add('open');
+      setTimeout(() => {
+        opening.classList.add('hidden');
+        letter.classList.add('visible');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        busy = false;
+      }, 820);
+    });
+
+    document.getElementById('closeLetter').addEventListener('click', () => {
+      if (busy) return;
+      busy = true;
+      letter.classList.remove('visible');
+      letter.classList.add('hidden');
+      opening.classList.remove('hidden');
+      envelope.classList.remove('open');
+      opening.querySelector('.eyebrow').textContent = 'Une dernière chose…';
+      opening.querySelector('.intro').innerHTML = 'Certaines choses sont plus belles<br>quand elles arrivent par surprise.';
+      opening.querySelector('.hint').textContent = '♡';
+      setTimeout(() => {
+        opening.classList.add('hidden');
+        ending.classList.add('visible');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        busy = false;
+      }, 1250);
+    });
+
+    document.getElementById('replay').addEventListener('click', () => {
+      ending.classList.remove('visible');
+      letter.classList.remove('hidden');
+      letter.classList.add('visible');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  </script>
+</body>
+</html>
